@@ -1,0 +1,25 @@
+name: Run Terraform Plan → Stage → Apply (GCP)
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main       # Run plan when PR targets main
+  push:
+    branches:
+      - main       # Run plan + apply after merge to main
+jobs:
+  terraform:
+    uses: LearnTechOps/Reusable-Templates/.github/workflows/terraform_gcp_backend_template.yaml@main
+
+    with:
+      terraform_dir: "./terraform"
+      tfvars_file: "./envs/dev.tfvars"
+      run_apply: true   # optional, triggers approval + apply
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
